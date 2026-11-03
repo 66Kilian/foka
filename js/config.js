@@ -53,6 +53,8 @@ export const CONFIG = {
   //   appId: '...',
   // },
 
-  // Csak DEMÓ módban: konyhai jelszó. Éles módban Firebase felhasználó (email + jelszó) kell.
+  // DEMÓ módban: kérjen-e jelszót a konyhai oldal. false = belépés nélkül nyílik.
+  // (Éles, Firebase módban mindig kell belépés, mert az adatbázis csak a személyzetnek enged írni.)
+  kitchenLogin: false,
   demoKitchenPassword: 'konyha',
 };

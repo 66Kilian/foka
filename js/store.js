@@ -133,6 +133,7 @@ export async function updateSettings(patch) {
 const K_AUTH = 'zolgiz_demo_kitchen';
 
 export function onAuth(cb) {
+  if (isDemo && CONFIG.kitchenLogin === false) { cb({ email: 'demo' }); return; }
   if (isDemo) { cb(sessionStorage.getItem(K_AUTH) === '1' ? { email: 'demo' } : null); return; }
   fb({ auth: true }).then(({ auth }) => auth.onAuthStateChanged((u) => cb(u)));
 }

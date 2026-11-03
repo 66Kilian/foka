@@ -36,6 +36,7 @@ if (store.isDemo) {
   $('#login-demo').hidden = false;
   $('#login-demo').textContent = `DEMÓ mód (nincs Firebase beállítva) – jelszó: „${CONFIG.demoKitchenPassword}”`;
   $('#demo-order').hidden = false;
+  if (CONFIG.kitchenLogin === false) $('#logout').hidden = true;
 }
 
 
