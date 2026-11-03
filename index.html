@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Zolgiz Ételbár – pizza, burger, gyros rendelés Nagycenken</title>
+  <meta name="description" content="Rendelj online a Zolgiz Ételbárból: 32 cm-es pizzák, hamburgerek, gyros, melegszendvicsek és frissensültek elvitelre vagy házhozszállítással Nagycenken és környékén. Élő rendeléskövetés.">
+  <meta name="theme-color" content="#c8281b">
+  <link rel="canonical" href="https://zolgiznagycenk.netlify.app/">
+  <meta property="og:type" content="restaurant">
+  <meta property="og:title" content="Zolgiz Ételbár – Nagycenk">
+  <meta property="og:description" content="Pizza, burger, gyros online rendeléssel, élő követéssel.">
+  <meta property="og:image" content="https://zolgiznagycenk.netlify.app/images/1565299624946-b28f40a0ae38-l.webp">
+  <meta property="og:locale" content="hu_HU">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23c8281b'/%3E%3Ctext x='32' y='45' font-family='Arial Black,Arial' font-weight='900' font-size='38' text-anchor='middle' fill='%23ffc629'%3EZ%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="images/1565299624946-b28f40a0ae38-l.webp" fetchpriority="high">
+  <link rel="stylesheet" href="css/site.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "name": "Zolgiz Ételbár",
+    "servesCuisine": ["Pizza", "Hamburger", "Gyros"],
+    "telephone": "+3699359902",
+    "address": { "@type": "PostalAddress", "streetAddress": "Soproni utca 1.", "postalCode": "9485", "addressLocality": "Nagycenk", "addressCountry": "HU" },
+    "geo": { "@type": "GeoCoordinates", "latitude": 47.604695, "longitude": 16.697378 },
+    "url": "https://zolgiznagycenk.netlify.app/",
+    "sameAs": ["https://www.facebook.com/share/1ELrtrQwDe/"],
+    "hasMenu": "https://zolgiznagycenk.netlify.app/#etlap"
+  }
+  </script>
+</head>
+<body>
+  <a class="skip" href="#etlap">Ugrás az étlapra</a>
+
+  <header class="top">
+    <div class="top__in">
+      <a class="brand" href="#">
+        <span class="brand__mark" aria-hidden="true">Z</span>
+        <span class="brand__txt"><b>Zolgiz</b><small>Ételbár · Nagycenk</small></span>
+      </a>
+      <nav class="top__nav" aria-label="Fő navigáció">
+        <a href="#etlap">Étlap</a>
+        <a href="#rolunk">Kiszállítás</a>
+        <a href="#kapcsolat">Kapcsolat</a>
+      </nav>
+      <a class="top__phone" href="tel:+3699359902"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg><span>+36 99 359 902</span></a>
+      <button class="cartbtn" type="button" data-open-cart>
+        <svg class="i" aria-hidden="true"><use href="#i-bag"/></svg>
+        <span class="cartbtn__label">Kosár</span>
+        <span class="cartbtn__count" data-cart-count>0</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="closed-banner" id="closed-banner" hidden>
+    <svg class="i" aria-hidden="true"><use href="#i-clock"/></svg>
+    <span>Most nem fogadunk online rendelést. Telefonon érdeklődj: <a href="tel:+3699359902">+36 99 359 902</a></span>
+  </div>
+
+  <main>
+    <!-- HERO SLIDESHOW -->
+    <section class="hero" aria-roledescription="körhinta" aria-label="Kiemelt pizzáink" id="hero">
+      <h1 class="sr">Zolgiz Ételbár, Nagycenk – online rendelés</h1>
+      <div class="hero__stage" id="hero-stage"></div>
+      <div class="hero__ui">
+        <div class="hero__controls">
+          <button class="hero__arrow" type="button" data-hero="prev" aria-label="Előző"><svg class="i" aria-hidden="true"><use href="#i-left"/></svg></button>
+          <button class="hero__arrow" type="button" data-hero="next" aria-label="Következő"><svg class="i" aria-hidden="true"><use href="#i-right"/></svg></button>
+          <button class="hero__pause" type="button" data-hero="pause" aria-label="Automatikus lapozás megállítása"><svg class="i" aria-hidden="true"><use href="#i-pause"/></svg></button>
+        </div>
+        <ol class="hero__rail" id="hero-rail" aria-label="Diák"></ol>
+      </div>
+    </section>
+
+    <!-- INFO SÁV -->
+    <section class="facts" id="rolunk" aria-label="Rendelési információk">
+      <div class="facts__in">
+        <div class="fact">
+          <svg class="i" aria-hidden="true"><use href="#i-bag"/></svg>
+          <div><b>Elvitel</b><span>Szólunk, amint elkészült – csak akkor indulj.</span></div>
+        </div>
+        <div class="fact">
+          <svg class="i" aria-hidden="true"><use href="#i-bike"/></svg>
+          <div><b>Házhozszállítás</b><span>A címed alapján kiszámoljuk, mikorra ér oda a futár.</span></div>
+        </div>
+        <div class="fact">
+          <svg class="i" aria-hidden="true"><use href="#i-bell"/></svg>
+          <div><b>Élő követés</b><span>Látod, mikor készül, mikor indul a futár.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- KATEGÓRIÁK -->
+    <div class="catbar" id="catbar">
+      <div class="catbar__in">
+        <nav class="catbar__list" id="cat-list" aria-label="Kategóriák"></nav>
+        <label class="search">
+          <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
+          <span class="sr">Keresés az étlapon</span>
+          <input type="search" id="search" placeholder="Keresés: pl. bacon, gomba…" autocomplete="off">
+        </label>
+      </div>
+    </div>
+
+    <section class="menu" id="etlap" aria-label="Étlap">
+      <div id="menu-sections"></div>
+      <p class="menu__empty" id="search-empty" hidden>Nincs találat. Próbáld másik összetevővel, pl. „sonka”.</p>
+    </section>
+  </main>
+
+  <footer class="foot" id="kapcsolat">
+    <div class="foot__in">
+      <div class="foot__brand">
+        <span class="brand__mark brand__mark--lg" aria-hidden="true">Z</span>
+        <p><b>Zolgiz Ételbár</b><br>Pizza, burger, gyros, frissensültek – Nagycenk szívében.</p>
+      </div>
+      <div>
+        <h2>Itt vagyunk</h2>
+        <p><a href="https://www.openstreetmap.org/?mlat=47.604695&mlon=16.697378#map=17/47.604695/16.697378" target="_blank" rel="noopener">9485 Nagycenk, Soproni utca 1.</a></p>
+        <p><a href="tel:+3699359902">+36 99 359 902</a></p>
+      </div>
+      <div>
+        <h2>Kövess minket</h2>
+        <p><a href="https://www.facebook.com/share/1ELrtrQwDe/?mibextid=wwXIfr" target="_blank" rel="noopener">Facebook</a></p>
+      </div>
+    </div>
+    <p class="foot__copy">© <span id="year"></span> Zolgiz Ételbár. A képek illusztrációk.</p>
+  </footer>
+
+  <!-- Lebegő kosár / követés sáv -->
+  <div class="floaters">
+    <button class="tracker-pill" type="button" id="tracker-pill" hidden></button>
+    <button class="cartbar" type="button" id="cartbar" data-open-cart hidden></button>
+  </div>
+
+  <!-- TERMÉK TESTRESZABÁS -->
+  <dialog class="sheet dish-dlg" id="dish-dlg" aria-labelledby="dd-title">
+    <form method="dialog" class="dish-dlg__form" id="dish-form"></form>
+  </dialog>
+
+  <!-- KOSÁR / PÉNZTÁR / KÖVETÉS -->
+  <dialog class="drawer" id="cart-dlg" aria-label="Kosár">
+    <div class="drawer__in" id="drawer"></div>
+  </dialog>
+
+  <script type="module" src="js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /konyha
+Sitemap: https://zolgiznagycenk.netlify.app/sitemap.xml

@@ -1,0 +1,48 @@
+rules_version = '2';
+// Zolgiz Ételbár – Firestore biztonsági szabályok
+// Másold be: Firebase Console → Firestore Database → Rules → Publish
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Konyhai személyzet = bejelentkezett felhasználó, akinek van "staff/{uid}" dokumentuma.
+    // (A dokumentumot kézzel hozod létre a konzolban – README.)
+    function staff() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/staff/$(request.auth.uid));
+    }
+
+    function validOrder(d) {
+      return d.keys().hasOnly(['code', 'customerName', 'customerPhone', 'orderType', 'town', 'street', 'address',
+                               'courierNote', 'items', 'subtotal', 'packagingFee', 'total', 'quotedPrepMinutes',
+                               'delivery', 'status', 'createdAt', 'serverTime'])
+        && d.status == 'NEW'
+        && d.orderType in ['pickup', 'delivery']
+        && d.customerName is string && d.customerName.size() >= 2 && d.customerName.size() <= 60
+        && d.customerPhone is string && d.customerPhone.matches('^[+]36[0-9]{9}$')
+        && d.items is list && d.items.size() > 0 && d.items.size() <= 40
+        && d.total is number && d.total > 0 && d.total < 300000
+        && d.createdAt is number
+        && d.createdAt > request.time.toMillis() - 300000
+        && d.createdAt < request.time.toMillis() + 300000
+        && d.serverTime == request.time
+        && (d.orderType == 'pickup' || (d.address is string && d.address.size() > 3 && d.address.size() <= 200));
+    }
+
+    match /orders/{orderId} {
+      // A vásárló a saját rendelését a (kitalálhatatlan) azonosítóval követi – listázni nem tud.
+      allow get: if true;
+      allow create: if validOrder(request.resource.data);
+      allow list, update, delete: if staff();
+    }
+
+    match /settings/{doc} {
+      allow read: if true;          // nyitva/zárva, elfogyott termékek
+      allow write: if staff();
+    }
+
+    match /staff/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;        // csak a konzolból
+    }
+  }
+}
