@@ -1,81 +1,69 @@
-# Zolgiz Ételbár – online rendelés + konyhai felület
+# Zolgiz Ételbár – online rendelés + admin
 
-Statikus weboldal (HTML/CSS/JS, nincs build), Netlify-ra tehető. Adatbázis: Firebase Firestore.
+Egyetlen Next.js alkalmazás (React frontend + TypeScript backend), Vercelen fut. Nincs külön szerver.
 
 | Oldal | Kinek | Mit tud |
 |---|---|---|
-| `/` (index.html) | vásárló | kiemelt pizzák slideshow, kategóriasáv (Népszerű, Pizzák, Húsimádóknak, Szalámis, Húsmentes, Csípős, Hamburgerek, Gyros, Melegszendvicsek, Frissensültek, Üdítők, Desszertek), keresés, testreszabás, kosár, elvitel / házhozszállítás, **a címhez kiszámolt kiszállítási idő**, élő rendeléskövetés |
-| `/konyha` (konyha.html) | csak a konyha | belépés, rendelés-tábla (Új → Készül → Kész → Úton), elkészítési idő egy koppintással, visszaszámláló, +5 perc, „Kész”, „Átadva a futárnak”, automatikus értesítés a vevőnek, elutasítás indokkal, visszavonás, étlap-elérhetőség (Elfogyott), nyitva/zárva, plusz várakozás, mai összesítő |
+| `/` | vásárló | slideshow, **napi ajánlat**, kategóriák, keresés, testreszabás, kosár, elvitel / házhozszállítás a címhez kiszámolt idővel, élő rendeléskövetés |
+| `/admin` | személyzet (jelszó) | **Pult** (rendelések: Új → Készül → Kész → Úton, SMS a vevőnek), **Oldal szerkesztő** (a saját oldal, bármire kattintva szerkeszthető), **Napi ajánlat**, **Étlap** (ár, kép, leírás, elfogyott), **Beállítások**, **Forgalom** |
 
-## 1. Kipróbálás most (DEMÓ mód)
+A `/konyha` cím az `/admin`-ra visz.
 
-Amíg a `js/config.js`-ben `firebase: null`, az oldal demó módban fut: a rendelések csak az adott böngészőben vannak.
+## 1. Élesítés Vercelen (egyszer kell beállítani)
+
+1. **Jelszó**: Vercel → a projekt → *Settings → Environment Variables* → `ADMIN_PASSWORD` = erős jelszó (ezzel lép be a konyha).
+2. **Adatbázis** (rendelések, étlap): *Storage → Create → Upstash for Redis* (ingyenes csomag elég) → *Connect to project*. A szükséges változókat a Vercel magától beállítja.
+3. **Képtárhely** (feltöltött fotók): *Storage → Create → Blob* → *Connect to project*.
+4. *Deployments → Redeploy*.
+
+Ha a 2. vagy 3. pont hiányzik, az oldal működik, de a módosítások és képek elveszhetnek. Ilyenkor az admin *Beállítások* fülén figyelmeztetés látszik.
+
+> Ha a Vercel a megnyitáskor bejelentkezést kér: *Settings → Deployment Protection → Vercel Authentication → Disabled*, vagy használd a fő `….vercel.app` címet.
+
+## 2. Helyi futtatás
 
 ```bash
-cd "fofo etterme"
-python3 -m http.server 8765
+npm install
+npm run dev        # http://localhost:3000  és  http://localhost:3000/admin  (jelszó: konyha)
 ```
 
-- Vásárlói oldal: http://localhost:8765/
-- Konyha (másik fülön): http://localhost:8765/konyha.html (jelszó: `konyha`)
+Helyben az adatok a `.data/` mappába kerülnek, semmit nem kell beállítani.
 
-Adj le egy rendelést, és a konyhai fülön fogadd el. A vásárlói fül élőben frissül.
+## 3. Hogyan használd az admint
 
-## 2. Élesítés Firebase-zel
+- **Oldal szerkesztő**: balra a saját oldalad, ahogy a vevő látja. Kattints egy pizzára, a slideshow-ra, egy kategória címére, a napi ajánlatra vagy a láblécre, és jobbra megjelenik a szerkesztője (szöveg, ár, kép feltöltése). Gép/telefon nézet között válthatsz.
+- A módosítások először csak nálad látszanak. Alul a **Közzététel** gomb teszi ki őket élesbe. Az **Elvetés** visszaállítja az utolsó közzétett állapotot.
+- Ami azonnal él, közzététel nélkül: **Elfogyott** kapcsoló, **Nyitva/Zárva**, **Plusz várakozás**, rendelések kezelése.
+- **Képek**: telefonról is feltölthetsz bármilyen fotót. A rendszer automatikusan kicsinyíti (nagy kép és kis négyzetes változat).
+- **Napi ajánlat**: adott napra vagy hetente ismétlődve (pl. hétköznap). Csak azon a napon látszik, a magyar idő szerint.
 
-1. https://console.firebase.google.com → **Új projekt** (ne a régi `zolgizetelbar01`-et használd, annak nyitott az adatbázisa).
-2. **Firestore Database** → Create database (régió: `europe-central2`).
-3. **Rules** fül → másold be a `firestore.rules` tartalmát → Publish.
-4. **Authentication** → Sign-in method → **Email/Password** bekapcsolása.
-   - Settings → User actions → **„Enable create (sign-up)” KIKAPCSOLÁSA** (így senki nem regisztrálhat magának fiókot).
-   - Users → Add user: pl. `konyha@zolgiz.hu` + erős jelszó.
-5. **Firestore** → Start collection: `staff` → Document ID = a felhasználó **UID**-ja (Authentication → Users listából) → mező: `name: "Konyha"`.
-   Csak az léphet be a konyhába, akinek itt van dokumentuma.
-6. Project settings → Your apps → Web app (`</>`) → a `firebaseConfig` objektumot másold a `js/config.js` → `firebase:` helyére.
+## 4. Kiszállítási idő
 
-## 3. Értesítések a vevőnek
+A cím → koordináta (OpenStreetMap), majd autós útvonal (OSRM) az étterem helyétől. Útidő × forgalmi szorzó + átadás. Ha az útvonaltervező nem elérhető, légvonal × 1,35 / 45 km/h. A `maxKm`-nél messzebbre nem enged rendelni. A számítás a szerveren fut, az eredményt 2 hétig megjegyzi.
 
-- **Mindig megy (ingyen):** a vevő böngészőjében élőben változik a blokk, csilingel, és rendszer-értesítést kap, ha engedélyezte.
-- **SMS** (`js/config.js` → `smsMode`):
-  - `'link'` (alap): a „Kész” / „Átadva a futárnak” gomb a konyhai telefonon/tableten megnyitja az SMS appot kitöltött szöveggel, csak a Küldésre kell nyomni. Ugyanez volt a régi oldalon is.
-  - `'twilio'`: **teljesen automatikus** SMS a `netlify/functions/send-sms.mjs`-sel. Kell hozzá Twilio fiók (SMS-enként kb. 30–40 Ft), és Netlifyn ezek a környezeti változók: `FIREBASE_API_KEY`, `STAFF_EMAILS`, `TWILIO_SID`, `TWILIO_TOKEN`, `TWILIO_FROM`.
-  - `'off'`: nincs SMS.
+## 5. Értesítés a vevőnek
 
-## 4. Hogyan számolja a kiszállítási időt?
+- A vevő oldalán mindig élőben frissül az állapot (csilingel, és rendszerértesítést is kap, ha engedélyezte).
+- **SMS** (Beállítások → SMS mód):
+  - *link* (alap, ingyenes): a „Kész” / „Átadva a futárnak” gomb a tableten megnyitja az SMS appot kitöltött üzenettel.
+  - *Twilio*: teljesen automatikus. Kell hozzá `TWILIO_SID`, `TWILIO_TOKEN`, `TWILIO_FROM` környezeti változó.
 
-1. A vevő címét (település + utca, házszám) az OpenStreetMap (Nominatim) koordinátává alakítja.
-2. Az OSRM útvonaltervező kiszámolja a valódi autós utat az étteremtől (Soproni u. 1.).
-3. Útidő × 1,15 + 3 perc átadás (`config.js` → `delivery`).
-4. Ha az útvonaltervező nem érhető el: légvonal × 1,35, 45 km/h átlaggal.
-5. Ha a cím messzebb van, mint `maxKm` (most 15 km, **egyeztetendő**), nem engedi leadni.
+## 6. Biztonság
 
-A vevő a pénztárnál ezt látja: „4,1 km · kb. 12 perc út – várható érkezés kb. 37 perc múlva”.
-Amikor a konyha megnyomja az „Átadva a futárnak” gombot, az érkezés = most + útidő. Ez megy ki az SMS-ben és a vevő oldalán is.
-
-> Az OSM ingyenes szolgáltatásai kis forgalomra valók (pár rendelés/perc rendben van). Nagy forgalomnál érdemes saját kulcsos szolgáltatásra váltani.
-
-## 5. Amit az étteremmel egyeztetni kell
-
-- **Üdítők és desszertek**: a régi oldalon nem voltak. A `js/menu.js`-ben `draft: true` jelölésű tételek (Coca-Cola, limonádé, ásványvíz, brownie, fagylaltkehely) csak **minták**, a termékeket és az árakat cserélni kell.
-- **Képek**: illusztrációk (Unsplash, szabadon használható). Ha van saját fotó, tedd az `images/` mappába, és írd át a `js/menu.js` tetején az `IMG` listát.
-- **„Húsmentes” kategória**: vegetáriánus pizzák, sajtot tartalmaznak. Vegán étel nincs az étlapon, ezért nem írtuk ki, hogy „vegán”.
-- Kiszállítási terület (`maxKm`), alap elkészítési idő (`defaultPrepMinutes`), települések listája.
-
-## 6. Feltöltés Netlifyra
-
-A teljes mappát húzd be a Netlify „Deploys” oldalára (drag & drop), vagy kösd GitHubhoz. A `netlify.toml` beállítja a biztonsági fejléceket, a konyhai oldal kitiltását a keresőkből, és az `/admin` → `/konyha` átirányítást.
+- Az árakat a szerver számolja újra (a böngészőből jövő árnak nem hisz), elfogyott vagy lejárt ajánlatot nem enged megrendelni.
+- Az admin csak jelszóval érhető el (HttpOnly süti, 30 nap). Hibás jelszóból 15 percenként legfeljebb 10 próbálkozás lehet.
+- Rendelés leadása IP-címenként korlátozott. A vevő a rendelését csak a kitalálhatatlan azonosítóval látja, a telefonszámát nem kapja vissza.
+- A feltöltött fájlt a szerver ellenőrzi, hogy valóban kép-e.
 
 ## Fájlok
 
 ```
-index.html, konyha.html     oldalak
-css/site.css, kitchen.css   dizájn
-js/config.js                ← BEÁLLÍTÁSOK (telefon, árak, Firebase, SMS mód)
-js/menu.js                  ← ÉTLAP (termékek, árak, képek, kategóriák)
-js/site.js                  vásárlói logika
-js/kitchen.js               konyhai logika
-js/store.js                 adatbázis (Firebase / demó)
-js/eta.js                   kiszállítási idő számítás
-firestore.rules             adatbázis-védelem
-netlify/functions/send-sms.mjs   automatikus SMS (opcionális)
+app/page.tsx                  vásárlói oldal (szerveren renderelve – Google-barát)
+app/admin/                    admin + belépés + szerkesztő előnézet
+app/api/                      backend végpontok (rendelés, követés, ETA, admin)
+components/site/              a vásárlói oldal React komponensei
+components/admin/             admin komponensek (pult, szerkesztők, űrlapok)
+lib/seed.ts                   kezdő étlap (első indításkor kerül az adatbázisba)
+lib/types.ts                  adatmodell
+lib/server/                   adatbázis, jelszó, árazás, útvonalszámítás
 ```
