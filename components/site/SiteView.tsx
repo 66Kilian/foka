@@ -157,7 +157,10 @@ function Shop({ content: c, status: initialStatus, edit }: Props) {
         <div className="top__in">
           <Editable target={{ kind: 'brand' }} label="Név, logó">
             <a className="brand" href="#">
-              <span className="brand__mark" aria-hidden="true">{c.brand.mark}</span>
+              {c.brand.logo
+                // eslint-disable-next-line @next/next/no-img-element
+                ? <img className="brand__logo" src={c.brand.logo.thumb} alt="" width={40} height={40} />
+                : <span className="brand__mark" aria-hidden="true">{c.brand.mark}</span>}
               <span className="brand__txt"><b>{c.brand.short}</b><small>{c.brand.subtitle}</small></span>
             </a>
           </Editable>
@@ -202,7 +205,10 @@ function Shop({ content: c, status: initialStatus, edit }: Props) {
         <footer className="foot" id="kapcsolat">
           <div className="foot__in">
             <div className="foot__brand">
-              <span className="brand__mark brand__mark--lg" aria-hidden="true">{c.brand.mark}</span>
+              {c.brand.logo
+                // eslint-disable-next-line @next/next/no-img-element
+                ? <img className="brand__logo brand__logo--lg" src={c.brand.logo.thumb} alt="" width={56} height={56} />
+                : <span className="brand__mark brand__mark--lg" aria-hidden="true">{c.brand.mark}</span>}
               <p><b>{c.brand.name}</b><br />{c.brand.tagline}</p>
             </div>
             <div>

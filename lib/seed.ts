@@ -102,6 +102,7 @@ export const SEED: Content = {
     subtitle: 'Ételbár · Nagycenk',
     tagline: 'Pizza, burger, gyros, frissensültek – Nagycenk szívében.',
     mark: 'Z',
+    logo: null,
   },
   contact: {
     phone: '+36 99 359 902',

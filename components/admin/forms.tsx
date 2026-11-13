@@ -103,8 +103,8 @@ export function Days({ value, onChange }: { value: number[]; onChange: (v: numbe
 
 export type Uploader = (file: File) => Promise<NonNullable<Img>>;
 
-export function ImageField({ label, value, onChange, upload, library, fallback }: {
-  label: string; value: Img; onChange: (v: Img) => void; upload: Uploader; library: NonNullable<Img>[]; fallback?: Img;
+export function ImageField({ label, hint, value, onChange, upload, library, fallback }: {
+  label: string; hint?: string; value: Img; onChange: (v: Img) => void; upload: Uploader; library: NonNullable<Img>[]; fallback?: Img;
 }) {
   const input = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
@@ -122,7 +122,7 @@ export function ImageField({ label, value, onChange, upload, library, fallback }
 
   return (
     <div className="af">
-      <span className="af__label">{label}{!value && fallback ? <small>most a termék képe látszik</small> : null}</span>
+      <span className="af__label">{label}{!value && fallback ? <small>most a termék képe látszik</small> : hint ? <small>{hint}</small> : null}</span>
       <div
         className={`aimg${drag ? ' is-drag' : ''}${busy ? ' is-busy' : ''}`}
         onDragOver={(e) => { e.preventDefault(); setDrag(true); }}

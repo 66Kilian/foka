@@ -59,9 +59,9 @@ export type Offer = {
 export type Fact = { id: string; icon: 'bag' | 'bike' | 'bell' | 'clock' | 'pin' | 'flame' | 'leaf' | 'pizza'; title: string; text: string };
 
 export type Content = {
-  brand: { name: string; short: string; subtitle: string; tagline: string; mark: string };
+  brand: { name: string; short: string; subtitle: string; tagline: string; mark: string; /** ha van, a betű helyett ez látszik */ logo?: Img };
   contact: { phone: string; address: string; town: string; facebook: string; lat: number; lng: number };
-  seo: { title: string; description: string };
+  seo: { title: string; description: string; /** Facebook / Messenger megosztáskor látszó kép */ image?: Img };
   texts: { closed: string; offersTitle: string; offersSub: string; footerNote: string; searchPlaceholder: string };
   hero: HeroSlide[];
   facts: Fact[];

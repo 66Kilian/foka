@@ -1,7 +1,7 @@
 'use client';
 import { useMemo, useState } from 'react';
 import { Icon } from '../Icon';
-import { Group, Lines, Num, Select, Text } from './forms';
+import { Group, ImageField, Lines, Num, Select, Text } from './forms';
 import { ItemEditor, OfferEditor, newItem, newOffer } from './editors';
 import { uid, useAdmin } from './state';
 import { offerIsToday, offerWhen } from '@/lib/menu';
@@ -164,7 +164,7 @@ export function OffersPane() {
 
 /* ---------------- Beállítások ---------------- */
 export function SettingsPane({ storage }: { storage: string }) {
-  const { draft, update } = useAdmin();
+  const { draft, update, upload, library } = useAdmin();
   const set = <K extends keyof typeof draft>(k: K, p: Partial<(typeof draft)[K]>) => update((d) => ({ ...d, [k]: { ...(d[k] as object), ...p } }));
   return (
     <div className="pane pane--narrow">
@@ -211,7 +211,8 @@ export function SettingsPane({ storage }: { storage: string }) {
         <Text label="„Futár elindult” üzenet" hint="{nev} {kod} {erkezes}" value={draft.sms.dispatch} onChange={(v) => set('sms', { dispatch: v })} multiline maxLength={300} />
         <Lines label="Elutasítás indokai" hint="a konyha ezek közül választ" value={draft.rejectReasons} onChange={(v) => update((d) => ({ ...d, rejectReasons: v }))} rows={4} />
       </Group>
-      <Group title="Google találat" desc="Ez látszik a Google-ben és megosztáskor.">
+      <Group title="Google és Facebook" desc="Ez látszik a Google-ben, és ha valaki megosztja az oldal linkjét.">
+        <ImageField label="Megosztási kép" hint="ha nincs, az első slideshow-kép" value={draft.seo.image ?? null} onChange={(v) => set('seo', { image: v })} upload={upload} library={library} />
         <Text label="Oldal címe" value={draft.seo.title} onChange={(v) => set('seo', { title: v })} maxLength={90} />
         <Text label="Leírás" value={draft.seo.description} onChange={(v) => set('seo', { description: v })} multiline maxLength={300} />
       </Group>

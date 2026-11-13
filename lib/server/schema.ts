@@ -13,12 +13,12 @@ const id = z.string().regex(/^[a-z0-9-]{1,48}$/);
 const tag = z.enum(['popular', 'meat', 'salami', 'veg', 'spicy']);
 
 export const ContentSchema = z.object({
-  brand: z.object({ name: str(60), short: str(30), subtitle: str(60), tagline: str(200), mark: str(2) }),
+  brand: z.object({ name: str(60), short: str(30), subtitle: str(60), tagline: str(200), mark: str(2), logo: img.optional() }),
   contact: z.object({
     phone: str(30), address: str(120), town: str(60), facebook: z.union([z.literal(''), z.string().url().max(300).startsWith('https://')]),
     lat: z.number().min(-90).max(90), lng: z.number().min(-180).max(180),
   }),
-  seo: z.object({ title: str(90), description: str(300) }),
+  seo: z.object({ title: str(90), description: str(300), image: img.optional() }),
   texts: z.object({ closed: str(200), offersTitle: str(60), offersSub: str(120), footerNote: str(200), searchPlaceholder: str(60) }),
   hero: z.array(z.object({ id, itemId: id, kicker: str(60), title: str(60), text: str(240), image: img })).max(12),
   facts: z.array(z.object({ id, icon: z.enum(['bag', 'bike', 'bell', 'clock', 'pin', 'flame', 'leaf', 'pizza']), title: str(40), text: str(140) })).max(6),

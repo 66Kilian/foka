@@ -273,14 +273,16 @@ export function FactEditor({ id }: { id: string }) {
 
 export function BrandEditor() {
   const { draft, update } = useAdmin();
+  const { upload, library } = useAdmin();
   const set = (p: Partial<Content['brand']>) => update((d) => ({ ...d, brand: { ...d.brand, ...p } }));
   const b = draft.brand;
   return (
     <div className="aform">
+      <ImageField label="Logó" hint="ha nincs, a lenti betű látszik" value={b.logo ?? null} onChange={(v) => set({ logo: v })} upload={upload} library={library} />
       <Text label="Étterem teljes neve" value={b.name} onChange={(v) => set({ name: v })} maxLength={60} />
       <div className="agrid2">
         <Text label="Rövid név (fejléc)" value={b.short} onChange={(v) => set({ short: v })} maxLength={30} />
-        <Text label="Logó betű" value={b.mark} onChange={(v) => set({ mark: v.slice(0, 2) })} maxLength={2} />
+        <Text label="Logó betű (ha nincs kép)" value={b.mark} onChange={(v) => set({ mark: v.slice(0, 2) })} maxLength={2} />
       </div>
       <Text label="Alcím a név alatt" value={b.subtitle} onChange={(v) => set({ subtitle: v })} maxLength={60} />
       <Text label="Szlogen (lábléc)" value={b.tagline} onChange={(v) => set({ tagline: v })} multiline maxLength={200} />

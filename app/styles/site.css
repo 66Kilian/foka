@@ -94,6 +94,8 @@ p { margin: 0; }
   background: var(--tomato); color: var(--cheese); font: 800 24px/1 var(--display); transform: rotate(-4deg);
 }
 .brand__mark--lg { width: 56px; height: 56px; font-size: 34px; border-radius: 15px; }
+.brand__logo { width: 40px; height: 40px; border-radius: 11px; object-fit: cover; flex: none; }
+.brand__logo--lg { width: 56px; height: 56px; border-radius: 15px; }
 .brand__txt { display: flex; flex-direction: column; line-height: 1.05; }
 .brand__txt b { font: 800 1.35rem/1 var(--display); letter-spacing: -.02em; }
 .brand__txt small { font-size: .78rem; color: var(--ink-2); font-weight: 600; }

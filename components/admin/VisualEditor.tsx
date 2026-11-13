@@ -45,7 +45,6 @@ export function VisualEditor({ target, setTarget }: { target: EditTarget | null;
             <label><input type="radio" checked={device === 'mobile'} onChange={() => setDevice('mobile')} /><span>Telefon</span></label>
           </div>
           <label className="ved__check"><input type="checkbox" checked={closedView} onChange={(e) => setClosedView(e.target.checked)} />Zárva nézet</label>
-          <a className="kbtn kbtn--ghost" href="/" target="_blank" rel="noopener"><Icon name="ext" />Élő oldal</a>
         </div>
         <div className={`ved__viewport ved__viewport--${device}`}>
           <iframe ref={frame} src="/admin/elonezet" title="A vásárlói oldal előnézete" />

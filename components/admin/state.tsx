@@ -130,6 +130,8 @@ export function AdminProvider({ initial, initialStatus, toast, children }: {
     draft.items.forEach((i) => add(i.image));
     draft.offers.forEach((o) => add(o.image));
     draft.hero.forEach((h) => add(h.image));
+    add(draft.brand.logo ?? null);
+    add(draft.seo.image ?? null);
     return [...seen.values()];
   }, [draft, uploaded]);
 

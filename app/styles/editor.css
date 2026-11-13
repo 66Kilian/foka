@@ -215,3 +215,40 @@
 .atop { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
 .atop li span { margin-right: 10px; }
 .adm .kt__warn { margin-bottom: 16px; }
+
+/* ---------- Képek ---------- */
+.ipane { position: relative; max-width: 1400px; }
+.ipane .pane__head .kbtn { min-width: 220px; }
+.ipane__tip { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: 12px; background: var(--s1); border: 1px solid var(--line); color: var(--tx2); font-size: .92rem; margin-bottom: 16px; }
+.ipane__tip .i { color: var(--new); flex: none; margin-top: 2px; }
+.ipane__tip b { color: var(--tx); }
+.ipane__bar { margin-bottom: 8px; }
+.igroup { margin-top: 26px; }
+.igroup h2 { font-size: 1.2rem; }
+.igroup__desc { color: var(--tx3); font-size: .88rem; margin-top: 2px; }
+.islots { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 12px; }
+.islot { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 8px; border-radius: 14px; background: var(--s1); border: 1px solid var(--line); }
+.islot.is-missing { border-color: color-mix(in srgb, var(--new) 35%, var(--line)); }
+.islot__img { position: relative; aspect-ratio: 1; border-radius: 10px; overflow: hidden; border: 0; padding: 0; background: var(--bg); display: grid; place-items: center; cursor: pointer; }
+.islot__img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.islot.is-fallback .islot__img img { opacity: .55; filter: grayscale(.4); }
+.islot__empty { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--new); font-weight: 800; font-size: .85rem; }
+.islot__empty .i { width: 28px; height: 28px; }
+.islot__hover { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 8px; background: rgb(20 17 15 / .72); font-weight: 800; opacity: 0; transition: opacity .15s; }
+.islot__img:hover .islot__hover, .islot__img:focus-visible .islot__hover, .islot__img.is-drag .islot__hover { opacity: 1; }
+.islot__img.is-drag { outline: 3px solid var(--new); }
+.islot.is-missing .islot__img:not(:hover) .islot__hover { opacity: 0; }
+.islot__txt { display: flex; flex-direction: column; min-width: 0; padding: 0 2px; }
+.islot__txt b { font-size: .92rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.islot__txt small { color: var(--tx3); font-size: .78rem; }
+.islot__acts { display: flex; align-items: center; justify-content: space-between; min-height: 36px; }
+.islot__acts .kbtn--link { min-height: 36px; padding: 0 2px; }
+.kicon--sm { width: 36px; height: 36px; border-radius: 10px; }
+.islot__lib { position: absolute; z-index: 5; left: 0; right: 0; top: 100%; margin-top: 4px; min-width: 240px; box-shadow: 0 16px 40px rgb(0 0 0 / .6); }
+.ilib { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; }
+.ilib li { position: relative; aspect-ratio: 1; border-radius: 10px; overflow: hidden; background: var(--s2); }
+.ilib img { width: 100%; height: 100%; object-fit: cover; }
+.ilib li.is-free { outline: 2px dashed var(--new); outline-offset: -2px; }
+.ilib li span { position: absolute; left: 4px; right: 4px; bottom: 4px; padding: 2px 4px; border-radius: 6px; background: rgb(0 0 0 / .7); color: var(--new); font-size: .68rem; font-weight: 800; text-align: center; }
+.ipane__drop { position: fixed; inset: 16px; z-index: 70; display: flex; align-items: center; justify-content: center; gap: 12px; border: 3px dashed var(--new); border-radius: 24px; background: rgb(20 17 15 / .85); color: var(--new); font: 800 1.3rem var(--display); pointer-events: none; }
+.ipane__drop .i { width: 32px; height: 32px; }

@@ -6,20 +6,28 @@ import { AdminProvider, useAdmin } from './state';
 import { ACTIVE, Board, type Patch } from './Board';
 import { DayPane, MenuPane, OffersPane, SettingsPane } from './Panes';
 import { VisualEditor } from './VisualEditor';
+import { ImagesPane } from './ImagesPane';
 import type { EditTarget } from '../site/edit';
 import { api, ApiError, chime, unlockAudio } from '@/lib/client';
 import { hhmmss } from '@/lib/format';
 import type { Content, Order, Status } from '@/lib/types';
 
-type Tab = 'pult' | 'szerkeszto' | 'ajanlatok' | 'etlap' | 'beallitasok' | 'forgalom';
-const TABS: { id: Tab; label: string; icon: IconName }[] = [
-  { id: 'pult', label: 'Pult', icon: 'bell' },
-  { id: 'szerkeszto', label: 'Oldal szerkesztő', icon: 'edit' },
-  { id: 'ajanlatok', label: 'Napi ajánlat', icon: 'star' },
-  { id: 'etlap', label: 'Étlap', icon: 'pizza' },
-  { id: 'beallitasok', label: 'Beállítások', icon: 'gear' },
-  { id: 'forgalom', label: 'Forgalom', icon: 'chart' },
+type Tab = 'pult' | 'forgalom' | 'szerkeszto' | 'etlap' | 'ajanlatok' | 'kepek' | 'beallitasok';
+type TabDef = { id: Tab; label: string; icon: IconName };
+const NAV: { title: string; tabs: TabDef[] }[] = [
+  { title: 'Konyha', tabs: [
+    { id: 'pult', label: 'Rendelések', icon: 'bell' },
+    { id: 'forgalom', label: 'Forgalom', icon: 'chart' },
+  ] },
+  { title: 'Weboldal', tabs: [
+    { id: 'szerkeszto', label: 'Oldal szerkesztő', icon: 'edit' },
+    { id: 'etlap', label: 'Étlap', icon: 'pizza' },
+    { id: 'ajanlatok', label: 'Napi ajánlat', icon: 'star' },
+    { id: 'kepek', label: 'Képek', icon: 'image' },
+    { id: 'beallitasok', label: 'Beállítások', icon: 'gear' },
+  ] },
 ];
+const TABS = NAV.flatMap((g) => g.tabs);
 
 export function AdminApp({ content, status }: { content: Content; status: Status }) {
   return (
@@ -151,58 +159,70 @@ function Shell() {
   const newCount = orders.filter((o) => o.status === 'NEW').length;
   useEffect(() => { document.title = newCount ? `(${newCount}) Új rendelés – Admin` : 'Admin – rendelések és oldal'; }, [newCount]);
 
+  const logout = async () => {
+    if (dirty && !confirm('Van még nem közzétett módosításod. Biztosan kilépsz?')) return;
+    await api('/api/admin/logout', { method: 'POST' }).catch(() => {});
+    location.href = '/admin/login';
+  };
+
   return (
-    <>
-      <header className="bar">
-        <div className="bar__brand"><span className="login__mark login__mark--sm" aria-hidden="true">Z</span><b>Admin</b></div>
-        <nav className="tabs" aria-label="Admin részei">
-          {TABS.map((t) => (
-            <button key={t.id} type="button" aria-current={tab === t.id ? 'page' : undefined} className={tab === t.id ? 'is-on' : ''} onClick={() => setTab(t.id)}>
-              <Icon name={t.icon} /><span>{t.label}</span>
-              {t.id === 'pult' && activeCount > 0 && <span className={`tabs__n${newCount ? ' is-new' : ''}`}>{activeCount}</span>}
-            </button>
-          ))}
-        </nav>
-        <div className="bar__tools">
-          <button className={`ktoggle${status.open ? '' : ' is-off'}`} type="button" aria-pressed={status.open}
+    <div className="ashell">
+      <aside className="aside">
+        <div className="aside__top">
+          <div className="aside__brand"><span className="login__mark login__mark--sm" aria-hidden="true">Z</span><b>Zolgiz</b></div>
+          <button className={`astatus${status.open ? '' : ' is-off'}`} type="button" aria-pressed={status.open}
+            title="Online rendelésfogadás be/ki"
             onClick={() => {
               if (status.open && !confirm('Lezárod az online rendelést? A vásárlók nem tudnak rendelni, amíg újra ki nem nyitod.')) return;
               void patchStatus({ open: !status.open });
             }}>
-            <span className="ktoggle__dot" /><span>Rendelésfogadás: {status.open ? 'NYITVA' : 'ZÁRVA'}</span>
+            <span className="astatus__dot" />{status.open ? 'Nyitva' : 'Zárva'}
           </button>
-          <label className="kselect">
-            <span>Plusz várakozás</span>
-            <select value={String(status.extraWait || 0)} onChange={(e) => patchStatus({ extraWait: +e.target.value })}>
-              {[0, 10, 20, 30, 45, 60].map((m) => <option key={m} value={m}>{m ? `+${m} perc` : 'nincs'}</option>)}
-            </select>
-          </label>
-          <button className={`kicon${sound ? ' is-on' : ''}`} type="button" aria-pressed={sound} aria-label={sound ? 'Hang kikapcsolása' : 'Hang bekapcsolása'} onClick={() => (sound ? setSound(false) : soundOn())}>
-            <Icon name={sound ? 'volume' : 'mute'} />
-          </button>
-          <Clock />
-          <button className="kicon" type="button" aria-label="Kijelentkezés" onClick={async () => {
-            if (dirty && !confirm('Van még nem közzétett módosításod. Biztosan kilépsz?')) return;
-            await api('/api/admin/logout', { method: 'POST' }).catch(() => {});
-            location.href = '/admin/login';
-          }}><Icon name="logout" /></button>
         </div>
-      </header>
-
-      {!sound && (
-        <div className="soundwarn">
-          <Icon name="volume" />
-          <span>A hang ki van kapcsolva – így nem hallod az új rendeléseket.</span>
-          <button className="kbtn kbtn--go" type="button" onClick={soundOn}>Hang bekapcsolása</button>
+        <nav className="anav" aria-label="Admin részei">
+          {NAV.map((g) => (
+            <div key={g.title} className="anav__group">
+              <p className="anav__title">{g.title}</p>
+              {g.tabs.map((t) => (
+                <button key={t.id} type="button" aria-current={tab === t.id ? 'page' : undefined} className={tab === t.id ? 'is-on' : ''} onClick={() => setTab(t.id)}>
+                  <Icon name={t.icon} /><span>{t.label}</span>
+                  {t.id === 'pult' && activeCount > 0 && <span className={`tabs__n${newCount ? ' is-new' : ''}`}>{activeCount}</span>}
+                </button>
+              ))}
+            </div>
+          ))}
+        </nav>
+        <div className="aside__foot">
+          <a className="anav__link" href="/" target="_blank" rel="noopener noreferrer"><Icon name="ext" /><span>Élő oldal</span></a>
+          <button type="button" className="anav__link" onClick={logout}><Icon name="logout" /><span>Kilépés</span></button>
         </div>
-      )}
-      {netErr && <div className="errbar" role="alert">{netErr}</div>}
+      </aside>
 
       <main className={`amain amain--${tab}`}>
+        {netErr && <div className="errbar" role="alert">{netErr}</div>}
+        {tab === 'pult' && (
+          <div className="ptools">
+            <h1>Rendelések</h1>
+            {!sound && (
+              <button type="button" className="ptools__sound" onClick={soundOn}><Icon name="mute" />Hang ki – bekapcsolás</button>
+            )}
+            <div className="ptools__right">
+              <label className="kselect">
+                <span>Plusz várakozás</span>
+                <select value={String(status.extraWait || 0)} onChange={(e) => patchStatus({ extraWait: +e.target.value })}>
+                  {[0, 10, 20, 30, 45, 60].map((m) => <option key={m} value={m}>{m ? `+${m} perc` : 'nincs'}</option>)}
+                </select>
+              </label>
+              {sound && <button className="kicon is-on" type="button" aria-pressed aria-label="Hang kikapcsolása" onClick={() => setSound(false)}><Icon name="volume" /></button>}
+              <Clock />
+            </div>
+          </div>
+        )}
         {tab === 'pult' && <Board orders={orders} fresh={fresh} change={change} />}
         {tab === 'szerkeszto' && <VisualEditor target={target} setTarget={setTarget} />}
         {tab === 'ajanlatok' && <OffersPane />}
         {tab === 'etlap' && <MenuPane />}
+        {tab === 'kepek' && <ImagesPane />}
         {tab === 'beallitasok' && <SettingsPane storage={storage} />}
         {tab === 'forgalom' && <DayPane orders={orders} days={days} setDays={setDays} />}
       </main>
@@ -217,6 +237,6 @@ function Shell() {
           </button>
         </div>
       )}
-    </>
+    </div>
   );
 }

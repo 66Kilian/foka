@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(): Promise<Metadata> {
   const c = await getContent();
-  const img = heroSlides(c)[0]?.image?.src;
+  const img = c.seo.image?.src ?? heroSlides(c)[0]?.image?.src;
   return {
     title: c.seo.title,
     description: c.seo.description,
