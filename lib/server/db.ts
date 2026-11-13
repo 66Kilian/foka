@@ -20,25 +20,28 @@ interface Store {
 }
 
 /* ---------------- Redis ---------------- */
+// Minden kulcs „zolgiz:” előtagot kap, így az adatbázis más projekttel is megosztható.
+const K = (k: string) => `zolgiz:${k}`;
+
 function redisStore(r: Redis): Store {
   return {
     kind: 'redis',
-    async get<T>(key: string) { return (await r.get<T>(key)) ?? null; },
-    async set(key, value, ttlSec) { ttlSec ? await r.set(key, value, { ex: ttlSec }) : await r.set(key, value); },
+    async get<T>(key: string) { return (await r.get<T>(K(key))) ?? null; },
+    async set(key, value, ttlSec) { ttlSec ? await r.set(K(key), value, { ex: ttlSec }) : await r.set(K(key), value); },
     async incr(key, ttlSec) {
-      const n = await r.incr(key);
-      if (n === 1) await r.expire(key, ttlSec);
+      const n = await r.incr(K(key));
+      if (n === 1) await r.expire(K(key), ttlSec);
       return n;
     },
     async putOrder(o, isNew) {
-      await r.set(`order:${o.id}`, o, { ex: ORDER_TTL });
-      if (isNew) await r.zadd('orders', { score: o.createdAt, member: o.id });
+      await r.set(K(`order:${o.id}`), o, { ex: ORDER_TTL });
+      if (isNew) await r.zadd(K('orders'), { score: o.createdAt, member: o.id });
     },
-    async getOrder(id) { return (await r.get<Order>(`order:${id}`)) ?? null; },
+    async getOrder(id) { return (await r.get<Order>(K(`order:${id}`))) ?? null; },
     async listOrders(since) {
-      const ids = await r.zrange<string[]>('orders', since, '+inf', { byScore: true });
+      const ids = await r.zrange<string[]>(K('orders'), since, '+inf', { byScore: true });
       if (!ids.length) return [];
-      const rows = await r.mget<(Order | null)[]>(...ids.map((id) => `order:${id}`));
+      const rows = await r.mget<(Order | null)[]>(...ids.map((id) => K(`order:${id}`)));
       return rows.filter((x): x is Order => !!x);
     },
   };
