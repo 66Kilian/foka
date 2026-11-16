@@ -24,7 +24,7 @@ Ha a 2. vagy 3. pont hiányzik, az oldal működik, de a módosítások és kép
 
 ```bash
 npm install
-npm run dev        # http://localhost:3000  és  http://localhost:3000/admin  (jelszó: konyha)
+npm run dev        # http://localhost:3000  és  http://localhost:3000/admin  (belépés: admin / admin)
 ```
 
 Helyben az adatok a `.data/` mappába kerülnek, semmit nem kell beállítani.

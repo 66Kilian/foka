@@ -5,11 +5,14 @@ import { cookies, headers } from 'next/headers';
 const COOKIE = 'zolgiz_admin';
 const DAYS = 30;
 
-/** Admin jelszó: Vercel → Settings → Environment Variables → ADMIN_PASSWORD. Helyben alapból „konyha”. */
+/** Admin felhasználónév: ADMIN_USER környezeti változó, alapból „admin”. */
+export function adminUser(): string {
+  return process.env.ADMIN_USER || 'admin';
+}
+
+/** Admin jelszó: ADMIN_PASSWORD környezeti változó, alapból „admin”. */
 export function adminPassword(): string | null {
-  const p = process.env.ADMIN_PASSWORD;
-  if (p) return p;
-  return process.env.NODE_ENV === 'production' ? null : 'konyha';
+  return process.env.ADMIN_PASSWORD || 'admin';
 }
 
 function secret() {
@@ -25,9 +28,11 @@ function safeEq(a: string, b: string) {
   return timingSafeEqual(ha, hb);
 }
 
-export function checkPassword(input: string) {
+export function checkLogin(user: string, password: string) {
   const p = adminPassword();
-  return !!p && safeEq(input, p);
+  const userOk = safeEq(user.trim(), adminUser());
+  const passOk = !!p && safeEq(password, p);
+  return userOk && passOk;
 }
 
 export async function startSession() {

@@ -3,17 +3,18 @@ import { useState } from 'react';
 import { api } from '@/lib/client';
 
 export function LoginForm({ configured, devDefault }: { configured: boolean; devDefault: boolean }) {
+  const [user, setUser] = useState('');
   const [pw, setPw] = useState('');
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
   return (
     <form className="login__box" noValidate onSubmit={async (e) => {
       e.preventDefault();
-      if (!pw) { setErr('Írd be a jelszót.'); return; }
+      if (!user || !pw) { setErr('Írd be a felhasználónevet és a jelszót.'); return; }
       setBusy(true);
       setErr('');
       try {
-        await api('/api/admin/login', { method: 'POST', json: { password: pw } });
+        await api('/api/admin/login', { method: 'POST', json: { username: user, password: pw } });
         location.href = '/admin';
       } catch (ex) {
         setErr(ex instanceof Error ? ex.message : 'Hiba történt.');
@@ -24,10 +25,14 @@ export function LoginForm({ configured, devDefault }: { configured: boolean; dev
       <h1>Admin</h1>
       <p className="login__lead">Rendelések, étlap, napi ajánlat és az oldal szerkesztése. 30 napig bejelentkezve maradsz ezen az eszközön.</p>
       {!configured && <p className="login__demo">Még nincs admin jelszó. Vercelen: Settings → Environment Variables → <b>ADMIN_PASSWORD</b>, majd Redeploy.</p>}
-      {devDefault && <p className="login__demo">Helyi mód – a jelszó: „konyha”</p>}
+      {devDefault && <p className="login__demo">Alapértelmezett belépés: admin / admin</p>}
+      <label className="kf">
+        <span>Felhasználónév</span>
+        <input type="text" name="username" autoComplete="username" autoCapitalize="none" spellCheck={false} required autoFocus value={user} onChange={(e) => setUser(e.target.value)} aria-invalid={!!err || undefined} aria-describedby="login-err" />
+      </label>
       <label className="kf">
         <span>Jelszó</span>
-        <input type="password" name="password" autoComplete="current-password" required autoFocus value={pw} onChange={(e) => setPw(e.target.value)} aria-invalid={!!err || undefined} aria-describedby="login-err" />
+        <input type="password" name="password" autoComplete="current-password" required value={pw} onChange={(e) => setPw(e.target.value)} aria-invalid={!!err || undefined} aria-describedby="login-err" />
       </label>
       <p className="login__err" id="login-err" role="alert">{err}</p>
       <button className="kbtn kbtn--go kbtn--block" type="submit" disabled={busy || !configured}>{busy ? 'Belépés…' : 'Belépés'}</button>
